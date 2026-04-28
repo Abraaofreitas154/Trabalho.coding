@@ -1,5 +1,5 @@
 // Configuração
-const API_URL = '/api/exercicios';
+const API_URL = 'https://trabalho-coding.onrender.com';
 let exerciciosCache = [];
 let deferredPrompt = null;
 
