@@ -29,8 +29,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Servir arquivos estáticos do frontend
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
+// Backend puro para Render - sem frontend estático
 
 // Conexão MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/musclefit')
@@ -40,9 +39,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/musclefit
 // Rotas API
 app.use('/api/exercicios', exercicioRoutes);
 
-// Rota raiz serve o frontend
+// Rota raiz API
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'public', 'index.html'));
+  res.json({ 
+    message: '🚀 MuscleFit API v1.0 - Backend funcionando!', 
+    api: '/api/exercicios',
+    health: '/health'
+  });
 });
 
 // Health check
@@ -50,13 +53,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Só inicia servidor local se não estiver no Vercel
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  });
-}
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 MuscleFit API v1.0 rodando na porta ${PORT}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📊 Health: http://localhost:${PORT}/health`);
+    console.log(`📋 API: http://localhost:${PORT}/api/exercicios`);
+  }
+});
 
 module.exports = app;
 
